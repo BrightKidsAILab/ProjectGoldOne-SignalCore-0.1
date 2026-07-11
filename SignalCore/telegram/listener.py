@@ -1,9 +1,14 @@
 from telethon import TelegramClient, events
 from dotenv import load_dotenv
-
 import os
 
 from parser.signal_parser import parse_signal
+from filters.validator import validate_signal
+from core.normalizer import normalize
+from core.deduplicator import is_duplicate
+from core.freshness import is_fresh
+from core.channel_manager import get_channel
+from core.router import process_signal
 
 load_dotenv()
 
@@ -23,17 +28,46 @@ def start_listener():
     @client.on(events.NewMessage)
     async def handler(event):
 
-        print("\n============================")
+        print("\n" + "=" * 60)
         print("NEW TELEGRAM MESSAGE")
-        print("============================")
+        print("=" * 60)
 
         print(event.raw_text)
 
+        channel = get_channel(event)
+
         parsed = parse_signal(event.raw_text)
 
-        print("\nParsed Signal")
+        signal = normalize(parsed)
 
-        print(parsed)
+        signal.source = channel.channel_name or "Saved Messages"
+
+        signal = validate_signal(signal)
+
+        channel.record_signal(signal.confidence)
+
+        print("\nValidated Signal")
+        print(signal)
+
+        print("\nChannel Statistics")
+        print(f"Source             : {signal.source}")
+        print(f"Signals Processed  : {channel.total_signals}")
+        print(f"Average Confidence : {channel.average_confidence:.2f}%")
+        print(f"Reliability        : {channel.reliability:.2f}%")
+
+        if not is_fresh(signal):
+            print("\n⚠ Signal expired.")
+            print("=" * 60)
+            return
+
+        if is_duplicate(signal):
+            print("\n⚠ Duplicate signal ignored.")
+            print("=" * 60)
+            return
+
+        process_signal(signal)
+
+        print("=" * 60)
 
     client.start()
 

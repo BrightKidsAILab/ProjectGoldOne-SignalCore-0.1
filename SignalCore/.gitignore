@@ -1,25 +1,72 @@
-# Virtual Environment
-.venv/
+# =====================================================
+# ProjectGoldOne - Git Ignore
+# =====================================================
 
+# -------------------------
 # Python
+# -------------------------
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
+# -------------------------
+# Virtual Environment
+# -------------------------
+.venv/
+venv/
+env/
+
+# -------------------------
 # Environment Variables
+# -------------------------
 .env
 
-# Telegram Session
-*.session
-
+# -------------------------
 # Firebase Credentials
-config/firebase-json.json
+# -------------------------
+*.json
+!README.json
 
+# -------------------------
+# Telegram Sessions
+# -------------------------
+*.session
+*.session-journal
+
+# -------------------------
+# SQLite Databases
+# -------------------------
+*.db
+*.sqlite
+*.sqlite3
+
+# -------------------------
 # Logs
+# -------------------------
 logs/
+*.log
 
-# VS Code
+# -------------------------
+# Temporary Files
+# -------------------------
+*.tmp
+*.bak
+*.cache
+
+# -------------------------
+# Zip Backups
+# -------------------------
+*.zip
+
+# -------------------------
+# IDE
+# -------------------------
 .vscode/
+.idea/
 
-# OS Files
+# -------------------------
+# Operating System
+# -------------------------
 .DS_Store
 Thumbs.db
+desktop.ini
